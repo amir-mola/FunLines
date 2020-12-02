@@ -1,11 +1,13 @@
 import csv
 
-csv_file = open('parsed.csv', mode='w')
+data_dir = 'data'
+
+csv_file = open(f'{data_dir}/parsed.csv', mode='w')
 fieldnames = ['original', 'edited', 'meanGrade']
 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 writer.writeheader()
 
-with open("train_funlines.csv", newline='') as f:
+with open(f'{data_dir}/train_funlines.csv', newline='') as f:
     spamreader = csv.DictReader(f)
     for row in spamreader:
         temp =row['original']

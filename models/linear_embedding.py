@@ -16,8 +16,7 @@ batch_size = 4
 num_epochs = 500
 learning_rate = 0.00001
 
-# TODO this is a basic linear regression model, we can probably get
-# higher accuracy with LSTM
+# don't use this yet
 
 
 class Net(torch.nn.Module):
@@ -32,7 +31,7 @@ class Net(torch.nn.Module):
         return x
 
 
-class LinearModel():
+class LinearEmbeddingModel():
     def __init__(self, train_data, test_data):
         self.model = Net()
         self.train_data = train_data
@@ -100,11 +99,5 @@ class LinearModel():
     def load_data():
         train, test = embedding.create_dataset('data/train_funlines.csv')
         print('done splitting')
-        train = embedding.embed(train)
-        test = embedding.embed(test)
-        train = embedding.create_batch(train, batch_size)
-        test = embedding.create_batch(test, batch_size)
-        print('done embedding')
-        pickle.dump(train, open(f'{cache_dir}/train_embed.p', 'wb'))
-        pickle.dump(test, open(f'{cache_dir}/test_embed.p', 'wb'))
-
+        pickle.dump(train, open(f'{cache_dir}/train.p', 'wb'))
+        pickle.dump(test, open(f'{cache_dir}/test.p', 'wb'))

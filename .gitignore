@@ -16,7 +16,9 @@ venv.bak/
 .DS_Store
 
 # Stuff specific to this project
-*.p
+cache/
+data/train.csv
+data/test.csv
 
 # IDE stuff
 .idea/

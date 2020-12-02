@@ -1,1 +1,2 @@
 from models.linear_model import LinearModel
+from models.linear_embedding import LinearEmbeddingModel
