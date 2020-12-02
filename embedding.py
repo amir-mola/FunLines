@@ -46,12 +46,12 @@ def embed(data_set):
     return embeddings
 
 # Creates random batches
-# This will return batch (tensor of sequences(batch_size x max_length x embedd_size), 
+# This will return batch (tensor of sequences(batch_size x max_length x embedd_size),
 # tensor of representation (batch_size x embedd_size), mean_score)
 def create_batch(data, size):
     random.shuffle(data)
     num_batch = len(data)//size
-    
+
     batches = []
     for i in range(num_batch):
         batch_sequence = []
@@ -75,10 +75,10 @@ def create_batch(data, size):
         batches.append((torch.stack(batch_sequence).squeeze(), torch.stack(batch_representation).squeeze(), batch_scores))
     return batches
 
-batch_size = 4
 
-train, test = create_dataset('train_funlines.csv')
-embeded = embed(train)
-batches = create_batch(embeded, batch_size)
-pdb.set_trace()
-
+if __name__ == '__main__':
+    batch_size = 4
+    train, test = create_dataset('train_funlines.csv')
+    embeded = embed(train)
+    batches = create_batch(embeded, batch_size)
+    pdb.set_trace()
