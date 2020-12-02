@@ -39,7 +39,9 @@ def get_pair(batch):
   y = torch.unsqueeze(y, 1)
   return Variable(x), Variable(y)
 
-def train(model, loss_fn, opt, train_data):
+def train(model, loss_fn, learning_rate, train_data):
+  opt = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
   i = 0
   for _ in range(num_epochs):
     for batch in train_data:
@@ -79,7 +81,6 @@ def test(model, test_data):
           correct += 1
         total += 1
 
-
   print(f'Test accuracy: {correct / total}')
 
 def load_data():
@@ -101,8 +102,7 @@ def main():
 
   model = Net(input_size, hidden_size, output_size)
   loss_fn = torch.nn.MSELoss()
-  opt = torch.optim.SGD(model.parameters(), lr=learning_rate)
-  train(model, loss_fn, opt, train_data)
+  train(model, loss_fn, learning_rate, train_data)
   test(model, test_data)
 
 
