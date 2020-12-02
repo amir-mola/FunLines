@@ -38,10 +38,9 @@ class LinearModel():
         self.train_data = train_data
         self.test_data = test_data
         self.loss_fn = torch.nn.MSELoss()
+        self.opt = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
     def train(self):
-        opt = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
-
         i = 0
         for _ in range(num_epochs):
             for batch in self.train_data:
@@ -49,11 +48,11 @@ class LinearModel():
                 y_hat = self.model(x)
                 loss = self.loss_fn(y_hat, y)
 
-                opt.zero_grad()
+                self.opt.zero_grad()
                 loss.backward()
-                opt.step()
+                self.opt.step()
 
-                if i % 1000 == 0:
+                if i % (4000 / batch_size) == 0:
                     print(loss.item())
 
                 i += 1

@@ -1,11 +1,11 @@
 import pandas as pd
 import pickle
 
-from models import LinearModel, LinearEmbeddingModel
+from models import LinearModel
 from utils.cachedir import cache_dir
 
 def main():
-    # LinearModel.load_data() # comment this out to use cache
+    LinearModel.load_data() # comment this out to use cache
     train_data = pickle.load(open(f'{cache_dir}/train_embedded.p', 'rb'))
     test_data = pickle.load(open(f'{cache_dir}/test_embedded.p', 'rb'))
     print('done loading')
