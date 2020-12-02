@@ -11,7 +11,10 @@ import re
 device = torch.device('cpu')
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased', return_dict=True).to(device)
+model = BertModel.from_pretrained(
+    'bert-base-uncased', return_dict=True).to(device)
+
+max_length = 42
 
 
 # Creates train and test data in pands dataframe
@@ -32,6 +35,7 @@ def create_dataset(path):
     test_data = pd.DataFrame(test_text, columns=['Text', 'Mean_Score'])
     return train_data, test_data
 
+
 # Embeds sentences through language model
 def embed(data_set):
     sentences = list(data_set['Text'])
@@ -39,46 +43,57 @@ def embed(data_set):
     embeddings = []
 
     for idx, sentence in enumerate(sentences):
-        inputs = tokenizer(sentence, return_tensors='pt', padding='max_length', max_length = 42)
-        for key in inputs: inputs[key] = inputs[key].to(device)
-        embeddings.append((model(**inputs), scores[idx]))
+        inputs = tokenize(sentence)
+        embeddings.append((embed_line(inputs), scores[idx]))
 
     return embeddings
 
-# Creates random batches
-# This will return batch (tensor of sequences(batch_size x max_length x embedd_size),
-# tensor of representation (batch_size x embedd_size), mean_score)
-def create_batch(data, size):
+
+def tokenize(sentence):
+    tokens = tokenizer(sentence, return_tensors='pt',
+                       padding='max_length', max_length=max_length)
+    for key in tokens:
+        tokens[key] = tokens[key].to(device)
+    return tokens
+
+
+def embed_line(tokens):
+    return model(**tokens)
+
+
+# Returns batch of (tensor of batch_size x embed size, batch_size x mean_score)
+def batch_embedded(data, size):
     random.shuffle(data)
     num_batch = len(data)//size
 
     batches = []
     for i in range(num_batch):
-        batch_sequence = []
-        batch_representation = []
+        batch_features = []
         batch_scores = []
-        for item in data[i*size:(i+1)*size]:
-            batch_sequence.append(item[0][0])
-            batch_representation.append(item[0][1])
-            batch_scores.append(item[1])
-        batches.append((torch.stack(batch_sequence).squeeze(), torch.stack(batch_representation).squeeze(), batch_scores))
+
+        for (states, scores) in data[i*size:(i+1)*size]:
+            # Extract [CLS] embedding
+            batch_features.append(states[0][:, 0, :])
+            batch_scores.append(scores)
+
+        batches.append((
+            torch.stack(batch_features).squeeze(),
+            batch_scores
+        ))
 
     # Putting last batch which is smaller than others
     if len(data[(i+1)*size:]) > 0:
-        batch_sequence = []
-        batch_representation = []
+        batch_features = []
         batch_scores = []
-        for item in data[(i+1)*size:]:
-            batch_sequence.append(item[0][0])
-            batch_representation.append(item[0][1])
-            batch_scores.append(item[1])
-        batches.append((torch.stack(batch_sequence).squeeze(), torch.stack(batch_representation).squeeze(), batch_scores))
+
+        for (states, scores) in data[(i+1)*size:]:
+            # Extract [CLS] embedding
+            batch_features.append(states[0][:, 0, :])
+            batch_scores.append(scores)
+
+        batches.append((
+            torch.stack(batch_features).squeeze(),
+            batch_scores
+        ))
+
     return batches
-
-
-if __name__ == '__main__':
-    batch_size = 4
-    train, test = create_dataset('train_funlines.csv')
-    embeded = embed(train)
-    batches = create_batch(embeded, batch_size)
-    pdb.set_trace()

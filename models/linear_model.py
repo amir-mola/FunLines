@@ -8,13 +8,13 @@ from utils.cachedir import cache_dir
 import numpy as np
 import pickle
 
-input_size = 768 * 43
+input_size = 768
 output_size = 1
 
-hidden_size = 5
+hidden_size = 20
 batch_size = 4
 num_epochs = 500
-learning_rate = 0.00001
+learning_rate = 0.0001
 
 # TODO this is a basic linear regression model, we can probably get
 # higher accuracy with LSTM
@@ -88,10 +88,7 @@ class LinearModel():
 
     @staticmethod
     def get_pair(batch):
-        (x1, x2, y) = batch
-        x2 = torch.unsqueeze(x2, 1)
-        x = torch.cat((x1, x2), 1)
-        x = torch.flatten(x, 1)
+        x, y = batch
         y = torch.Tensor(y)
         y = torch.unsqueeze(y, 1)
         return Variable(x), Variable(y)
@@ -102,9 +99,8 @@ class LinearModel():
         print('done splitting')
         train = embedding.embed(train)
         test = embedding.embed(test)
-        train = embedding.create_batch(train, batch_size)
-        test = embedding.create_batch(test, batch_size)
+        train = embedding.batch_embedded(train, batch_size)
+        test = embedding.batch_embedded(test, batch_size)
         print('done embedding')
-        pickle.dump(train, open(f'{cache_dir}/train_embed.p', 'wb'))
-        pickle.dump(test, open(f'{cache_dir}/test_embed.p', 'wb'))
-
+        pickle.dump(train, open(f'{cache_dir}/train_embedded.p', 'wb'))
+        pickle.dump(test, open(f'{cache_dir}/test_embedded.p', 'wb'))
