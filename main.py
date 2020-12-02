@@ -1,7 +1,7 @@
 import pandas as pd
 import pickle
 
-from models import LinearModel
+from models import LinearModel, RNN
 from utils.cachedir import cache_dir
 
 def main():
