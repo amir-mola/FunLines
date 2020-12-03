@@ -5,12 +5,17 @@ from models import LinearModel, RNN
 from utils.cachedir import cache_dir
 
 def main():
+    # Linear model
     # LinearModel.load_data() # comment this out to use cache
     # train_data = pickle.load(open(f'{cache_dir}/train_embedded.p', 'rb'))
     # test_data = pickle.load(open(f'{cache_dir}/test_embedded.p', 'rb'))
     # print('done loading')
+    # model = LinearModel(train_data, test_data)
+    # model.train()
+    # model.test()
 
-    RNN.load_data()
+    # RNN
+    RNN.load_data() # comment this out to use cache
     train_data = pickle.load(open(f'{cache_dir}/train_rnn.p', 'rb'))
     test_data = pickle.load(open(f'{cache_dir}/test_rnn.p', 'rb'))
     print('done loading')
