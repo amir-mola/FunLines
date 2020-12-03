@@ -34,18 +34,18 @@ class Net(torch.nn.Module):
 
 class LinearModel():
     def __init__(self, train_data, test_data):
-        self.model = Net()
+        self.net = Net()
         self.train_data = train_data
         self.test_data = test_data
         self.loss_fn = torch.nn.MSELoss()
-        self.opt = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
+        self.opt = torch.optim.SGD(self.net.parameters(), lr=learning_rate)
 
     def train(self):
         i = 0
         for _ in range(num_epochs):
             for batch in self.train_data:
                 x, y = self.get_pair(batch)
-                y_hat = self.model(x)
+                y_hat = self.net(x)
                 loss = self.loss_fn(y_hat, y)
 
                 self.opt.zero_grad()
@@ -56,9 +56,10 @@ class LinearModel():
                     print(loss.item())
 
                 i += 1
+        print('done training')
 
     def test(self):
-        self.model.eval()
+        self.net.eval()
 
         tolerance = 0.2
         correct = 0
@@ -72,7 +73,7 @@ class LinearModel():
         with torch.no_grad():
             for batch in self.test_data:
                 x, y = self.get_pair(batch)
-                y_hat = self.model(x)
+                y_hat = self.net(x)
                 losses.append(self.loss_fn(y_hat, y))
 
                 for b in range(batch_size):
@@ -84,6 +85,13 @@ class LinearModel():
 
         print(f'Test accuracy: {correct / total}')
         print(f'Test loss: {np.mean(losses)}')
+
+    def score(self, seq):
+        tokens = embedding.tokenize(seq)
+        embedded_seq = embedding.embed_line(tokens)
+        x = embedded_seq[0][:, 0, :]
+        y_hat = self.net(x)
+        return y_hat.item()
 
     @staticmethod
     def get_pair(batch):
