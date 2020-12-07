@@ -1,4 +1,7 @@
 # FunLines
+<input type="text" id="name" name="name"/>
+
+
 # Parsing the data
 Simply run `python3 parse.py` which generates a csv files with the original headlines as well as the edited ones with the mean grade for humor.
 # Split the data
