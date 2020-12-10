@@ -4,6 +4,7 @@ import pickle
 from models import LinearModel, RNN
 from utils.cachedir import cache_dir
 
+
 def main():
     # Linear model
 
@@ -21,8 +22,6 @@ def main():
     # model = RNN(train_data, test_data)
     # model.train()
     # model.test()
-
-
 
 
 if __name__ == '__main__':
