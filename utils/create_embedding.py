@@ -1,17 +1,8 @@
-'''
-This is to save embedding for later use.
-Still in progress
-'''
-
-
-
-
 import torch
 import pdb
 import random
 import pandas as pd
 from sklearn.model_selection import train_test_split
-# from transformers import BertTokenizer, BertModel
 from transformers import RobertaTokenizer, RobertaModel
 import csv
 import re
@@ -26,7 +17,7 @@ device = torch.device('cuda')
 
 
 tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-model = RobertaModel.from_pretrained('roberta-base')
+model = RobertaModel.from_pretrained('roberta-base').to(device)
 
 max_length = 42
 
@@ -57,15 +48,16 @@ def create_dataset(path):
             edited = row[1][:match.start()] + row[2] + row[1][match.end():]
             masked = row[1][:match.start()] + '<MASK>' + row[1][match.end():]
             data.append((original, edited, masked, float(row[4])))
-
-    data = pd.DataFrame(data, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
-    return data
+    train, test = train_test_split(data)
+    train = pd.DataFrame(train, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
+    test = pd.DataFrame(test, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
+    return train, test
 
 def tokenize(sentence):
     tokens = tokenizer(sentence, return_tensors='pt',
                        padding='max_length', max_length=max_length)
     for key in tokens:
-        tokens[key] = tokens[key]
+        tokens[key] = tokens[key].to(device)
     return tokens
 
 
@@ -85,29 +77,28 @@ def embed_batch(data):
     return embeddings
 
 
-dataset = create_dataset('../data/train_lines.csv')
+def save_embedding(original, edited, masked, labels, file_name):
+    with open('../data/'+file_name, 'a+b') as f:
+        pickle.dump((original, edited, masked, labels), f)
 
-dataset = FunLineDataset(dataset)
-loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False)
-original_embed = []
-edited_embed = []
-masked_embed = []
+train, test = create_dataset('../data/train_lines.csv')
 
-for batch in tqdm.tqdm(loader, desc=f'Embedding '):
-    original, edited, masked, _ = batch
-    original_embed.extend(embed_batch(original))
-    edited_embed.extend(embed_batch(edited))
-    masked_embed.extend(embed_batch(masked))
+trainset = FunLineDataset(train)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
 
+testset = FunLineDataset(test)
+testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=True)
 
-with open('original_embedding', 'wb') as f:
-    pickle.dump(original_embed, f)
+for batch in tqdm.tqdm(trainloader, desc=f'Embedding for trainset '):
+    original, edited, masked, labels = batch
+    original_embed = embed_batch(original)
+    edited_embed = embed_batch(edited)
+    masked_embed = embed_batch(masked)
+    save_embedding(original_embed, edited_embed, masked_embed, labels, 'trainset_embeddings')
 
-with open('edited_embedding', 'wb') as f:
-    pickle.dump(edited_embed, f)
-
-with open('masked_embedding', 'wb') as f:
-    pickle.dump(masked_embed, f)
-
-with open('original_embedding', 'rb') as f:
-    test = pickle.load(f)
+for batch in tqdm.tqdm(testloader, desc=f'Embedding for testset '):
+    original, edited, masked, labels = batch
+    original_embed = embed_batch(original)
+    edited_embed = embed_batch(edited)
+    masked_embed = embed_batch(masked)
+    save_embedding(original_embed, edited_embed, masked_embed, labels, 'testset_embeddings')

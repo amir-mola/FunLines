@@ -73,11 +73,3 @@ def embed_batch(data):
         # Getting [CLS] token
         embeddings.append(embed_line(inputs)[0][:,0,:])
     return torch.stack(embeddings).squeeze().to(device)
-
-
-train, test = create_dataset('../data/train_lines.csv')
-
-pdb.set_trace()
-data_train = embedding.FunLineDataset(train)
-data_test = embedding.FunLineDataset(test)
-train_loader = torch.utils.data.DataLoader(self.train_data, batch_size=batch_size, shuffle=True)

@@ -19,7 +19,10 @@ venv.bak/
 cache/
 data/train.csv
 data/test.csv
+data/testset_embeddings
+data/trainset_embeddings
 
 # IDE stuff
 .idea/
 .vscode/
+
