@@ -23,7 +23,7 @@ tokenizer_xlnet = XLNetTokenizer.from_pretrained('xlnet-base-cased')
 model_xlnet = XLNetModel.from_pretrained('xlnet-base-cased')
 
 
-max_length = 48
+max_length = 42
 
 class FunLineDataset(torch.utils.data.Dataset):
     def __init__(self, data):
