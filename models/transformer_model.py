@@ -117,7 +117,7 @@ class TransformerModel():
 
     @staticmethod
     def get_pair(batch):
-        original, edited, masked, y = batch
+        edited, original, masked, y = batch
         stacked_batch = []
 
         for i in range(len(original)):

@@ -18,9 +18,10 @@ batch_size = 16
 num_epochs = 5
 learning_rate = 0.001
 WEIGHT_DECAY = 0.0005
-device = torch.device('cuda')
-# TODO this is a basic linear regression model, we can probably get
-# higher accuracy with LSTM
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+print()
 
 
 class Net(torch.nn.Module):
@@ -39,7 +40,8 @@ class LinearModel():
     def __init__(self):
         self.net = Net().to(device)
         self.loss_fn = torch.nn.MSELoss()
-        self.opt = torch.optim.SGD(self.net.parameters(), lr=learning_rate, weight_decay=WEIGHT_DECAY)
+        self.opt = torch.optim.SGD(self.net.parameters(
+        ), lr=learning_rate, weight_decay=WEIGHT_DECAY)
 
     def train(self):
 
@@ -84,8 +86,8 @@ class LinearModel():
                     break
 
         print(f'Average MSE loss for Test: {torch.mean(torch.Tensor(losses))}')
-        print(f"Average RMSE loss for Test: {torch.sqrt(torch.mean(torch.Tensor(losses)))}")
-
+        print(
+            f"Average RMSE loss for Test: {torch.sqrt(torch.mean(torch.Tensor(losses)))}")
 
     @staticmethod
     def get_pair(batch):
@@ -95,17 +97,16 @@ class LinearModel():
         masked_batch = []
         # Just get CLS token
         for i in range(len(original)):
-            original_batch.append(original[i][0][:,0,:])
-            edited_batch.append(edited[i][0][:,0,:])
-            masked_batch.append(masked[i][0][:,0,:])
+            original_batch.append(original[i][0][:, 0, :])
+            edited_batch.append(edited[i][0][:, 0, :])
+            masked_batch.append(masked[i][0][:, 0, :])
         # Create dataset such that batch x size of embedding
         original_batch = torch.stack(original_batch).squeeze().to(device)
         edited_batch = torch.stack(edited_batch).squeeze().to(device)
         masked_batch = torch.stack(masked_batch).squeeze().to(device)
 
         # Concatenate original embed + edited embed + masked embed
-        x = torch.cat((original_batch, edited_batch, masked_batch),1)
+        x = torch.cat((original_batch, edited_batch, masked_batch), 1)
         y = y.to(torch.float)
         y = torch.unsqueeze(y, 1)
         return x, y
-

@@ -12,18 +12,22 @@ import pickle
 
 
 batch_size = 32
-device = torch.device('cuda')
 
 
+<<<<<<< HEAD
 tokenizer_bert = BertTokenizer.from_pretrained('bert-base-uncased')
 model_bert = BertModel.from_pretrained('bert-base-uncased').to(device)
 tokenizer_roberta = RobertaTokenizer.from_pretrained('roberta-base')
 model_roberta = RobertaModel.from_pretrained('roberta-base').to(device)
 tokenizer_xlnet = XLNetTokenizer.from_pretrained('xlnet-base-cased')
 model_xlnet = XLNetModel.from_pretrained('xlnet-base-cased')
+=======
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+>>>>>>> 64d79087ea58a13effcb213d3636ecf30aa69194
 
 
 max_length = 42
+
 
 class FunLineDataset(torch.utils.data.Dataset):
     def __init__(self, data):
@@ -33,12 +37,14 @@ class FunLineDataset(torch.utils.data.Dataset):
     def __len__(self):
         # TODO return the number of unique sequences you have, not the number of characters.
         return len(self.data)
-        
+
     def __getitem__(self, idx):
-        
+
         return list(self.data.loc[idx])
 
 # Creates train and test data in pands dataframe
+
+
 def create_dataset(path):
 
     data = []
@@ -46,18 +52,27 @@ def create_dataset(path):
         rows = csv.reader(f)
         rows = list(rows)
         for row in rows[1:]:
-            if float(row[4]) == 0: continue
+            if float(row[4]) == 0:
+                continue
             match = re.search(r'<.*>', row[1])
-            original = row[1][:match.start()] + row[1][match.start()+1:match.end()-2] + row[1][match.end():]
+            original = row[1][:match.start()] + row[1][match.start() +
+                                                       1:match.end()-2] + row[1][match.end():]
             edited = row[1][:match.start()] + row[2] + row[1][match.end():]
             masked = row[1][:match.start()] + '<MASK>' + row[1][match.end():]
             data.append((original, edited, masked, float(row[4])))
     train, test = train_test_split(data)
-    train = pd.DataFrame(train, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
-    test = pd.DataFrame(test, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
+    train = pd.DataFrame(
+        train, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
+    test = pd.DataFrame(
+        test, columns=['Original', 'Edited', 'Masked', 'Mean_Score'])
     return train, test
 
+<<<<<<< HEAD
 def tokenize(sentence, tokenizer):
+=======
+
+def tokenize(sentence):
+>>>>>>> 64d79087ea58a13effcb213d3636ecf30aa69194
     tokens = tokenizer(sentence, return_tensors='pt',
                        padding='max_length', max_length=max_length)
     for key in tokens:
@@ -85,13 +100,16 @@ def save_embedding(edited, original, masked, labels, file_name):
     with open('../data/'+file_name, 'a+b') as f:
         pickle.dump((edited, original, masked, labels), f)
 
+
 train, test = create_dataset('../data/train_lines.csv')
 
 trainset = FunLineDataset(train)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
+trainloader = torch.utils.data.DataLoader(
+    trainset, batch_size=batch_size, shuffle=True)
 
 testset = FunLineDataset(test)
-testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=True)
+testloader = torch.utils.data.DataLoader(
+    testset, batch_size=batch_size, shuffle=True)
 
 for batch in tqdm.tqdm(trainloader, desc=f'Bert Embedding for trainset '):
     original, edited, masked, labels = batch
