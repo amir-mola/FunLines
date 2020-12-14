@@ -51,7 +51,7 @@ class LinearModel():
                     x, y = self.get_pair(pickle.load(infile))
                     y = y.to(device)
                     y_hat = self.net(x)
-                    loss = self.loss_fn(y_hat, y)
+                    loss = torch.sqrt(self.loss_fn(y_hat, y))
 
                     self.opt.zero_grad()
                     loss.backward()

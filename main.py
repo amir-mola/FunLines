@@ -1,14 +1,14 @@
 import pandas as pd
 import pickle
 
-from models import LinearModel, RNN
+from models import LinearModel, RNN, TransformerModel
 from utils.cachedir import cache_dir
 
 def main():
     # Linear model
 
     print('done loading')
-    model = LinearModel()
+    model = TransformerModel()
     # model = LinearModel(train_data, test_data)
     model.train()
     model.test()
