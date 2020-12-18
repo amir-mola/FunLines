@@ -5,11 +5,11 @@ In this project, we are examining article headlines and attempting to quantify h
 The problem involves training a model on thousands of headlines that other people have quantified as humorous or not. In other words, the ground truth is other people’s perceptions of how funny certain headlines are. And we use these values to train the model. 
 
 # Related work
-The dataset for this project can be found at https://cs.rochester.edu/u/nhossain/funlines.html
+The dataset for this project can be found at https://cs.rochester.edu/u/nhossain/funlines.html \
 And the inpsiration for this project is from this paper: https://arxiv.org/pdf/2002.02031.pdf
 
 # Methodology
-x
+We used a transformer model and an LSTM model.
 
 # Experiments/evaluation
 x
