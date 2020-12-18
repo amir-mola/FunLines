@@ -62,6 +62,6 @@ To follow the original findings of the paper, we used MSE loss as our reporting 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/accuracy.png)
 
 # Related work and references <a name="related-work-references"></a>
-The dataset for this project can be found ![here](https://cs.rochester.edu/u/nhossain/funlines.html) \
-In our project we aimed to follow the structure and procedure based on this ![paper](https://arxiv.org/pdf/2002.02031.pdf)
+The dataset for this project can be found [here](https://cs.rochester.edu/u/nhossain/funlines.html) \
+In our project we aimed to follow the structure and procedure based on this [paper](https://arxiv.org/pdf/2002.02031.pdf)
 
