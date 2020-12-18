@@ -1,8 +1,20 @@
-# Table of Contents
-1. [Introduction] (#introduction)
+# Table of contents
+1. [Introduction](#introduction)
+2. [Some paragraph](#paragraph1)
+    1. [Sub paragraph](#subparagraph1)
+3. [Another paragraph](#paragraph2)
 
-## test intro <a name="introduction"></a>
-text
+## This is the introduction <a name="introduction"></a>
+Some introduction text, formatted in heading 2 style
+
+## Some paragraph <a name="paragraph1"></a>
+The first paragraph text
+
+### Sub paragraph <a name="subparagraph1"></a>
+This is a sub paragraph, formatted in heading 3 style
+
+## Another paragraph <a name="paragraph2"></a>
+The second paragraph text
 
 # Abstract
 In this project, we are examining article headlines and attempting to quantify how humorous they are. The model uses a continuous scale from 0 to 3 to rank how humorous a particular article headline is. Given an edited and original headline, we aim to predict the average humor score for it using Neural Networks. The process and results of this project can be used for applications such as advancing a machine’s understanding of humor in the English language and could help technologies such as voice assistant jokes.
