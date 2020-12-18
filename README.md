@@ -45,7 +45,8 @@ Ensembling multiple pretrained models to do certain tasks in NLP is one of the t
 
 Another approach that we took was using word embeddings instead of CLS tokens from original, edited,, and masked sentences. If replaced words or original words are more than 1, we simply averaged those word tokens to get a single word token.
 
-![aaa](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/architecture.png)
+![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/architecture.png)
+Example of averaging word tokens to get a new word token u
 
 Both of these approaches used two fully connected layers to predict the score using an arbitrary token that we inserted.
 
