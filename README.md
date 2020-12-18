@@ -1,3 +1,4 @@
+ https://amir-mola.github.io/FunLines/
 # Abstract
 In this project, we are examining article headlines and attempting to quantify how humorous they are. The model uses a continuous scale from 1 to 5 to rank how humorous a particular article headline is. The process and results of this project can be used for applications such as advancing a machine’s understanding of humor in the English language and could help technologies such as voice assistant jokes.
 
