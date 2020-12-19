@@ -16,7 +16,7 @@ output_size = 1
 hidden_size = 128
 num_epochs = 10
 learning_rate = 0.0005
-WEIGHT_DECAY = 0.0005
+WEIGHT_DECAY = 0.0000
 device = torch.device('cuda')
 
 ninp = 768
@@ -39,13 +39,16 @@ class Transformer(nn.Module):
         self.fc2 = torch.nn.Linear(hidden_size, output_size)
     def forward(self, src):
         # Creating cls_token to get representation of all sentence embeddings
-        cls_token = torch.zeros(len(src), 1,dtype=torch.long).to(device)
+        cls_token = torch.zeros(len(src[0]),dtype=torch.long).to(device)
         cls_token = self.embedding(cls_token)
-        x = torch.cat((cls_token,src), dim=1)
+        cls_token = cls_token.unsqueeze(dim=0)
+
+        x = torch.cat((cls_token,src), dim=0)
         x = self.transformer_encoder(x)
         # Just taking first embedidng. Hopefully, it captures other data by going through transformer layers
-        x = x[:,0,:]
-        x = F.leaky_relu(self.fc1(x))
+        x = x[0,:,:]
+
+        x = self.fc1(x)
         x = self.fc2(x)
         return x
 
@@ -53,24 +56,27 @@ class TransformerModel():
     def __init__(self):
         self.net = Transformer(ninp, nhead, nlayers).to(device)
         self.loss_fn = torch.nn.MSELoss()
-        self.opt = torch.optim.SGD(self.net.parameters(), lr=learning_rate, weight_decay=WEIGHT_DECAY)
+        self.opt = torch.optim.Adam(self.net.parameters(), lr=learning_rate, weight_decay=WEIGHT_DECAY)
+        self.train_losses = []
+        self.val_losses = []
 
     def train(self):
-
+        self.test('trainset')
+        self.test('valset')
         for epoch in range(num_epochs):
             print("Training : ", epoch+1)
             bertfile = open('data/trainset_bert_embeddings', 'rb')
             robertfile = open('data/trainset_robert_embeddings', 'rb')
-            xlnetfile = open('data/trainset_xlnet_embeddings', 'rb')
             while True:
                 try:
                     x_bert, y = self.get_pair(pickle.load(bertfile))
                     x_roberta, _ = self.get_pair(pickle.load(robertfile))
-                    x_xlnet, _ = self.get_pair(pickle.load(xlnetfile))
-                    y = y.to(device)
-                    x = torch.cat((x_roberta, x_bert, x_xlnet), dim=1)
 
+                    y = y.to(device)
+                    x = torch.cat((x_roberta, x_bert), dim=0)
+ 
                     y_hat = self.net(x)
+
                     loss = torch.sqrt(self.loss_fn(y_hat, y))
 
                     self.opt.zero_grad()
@@ -81,27 +87,31 @@ class TransformerModel():
                     break
             bertfile.close()
             robertfile.close()
-            xlnetfile.close()
-            self.test()
+            self.test('trainset')
+            self.test('valset')
 
         print('done training')
+        print("Test on testset")
+        self.test('testset')
 
-    def test(self):
+
+
+    def test(self, dataset):
         self.net.eval()
-        print("Test")
+        print(dataset)
         losses = []
-
+        bert_path = 'data/'+dataset+'_bert_embeddings'
+        roberta_path = 'data/'+dataset+'_robert_embeddings'
         with torch.no_grad():
-            bertfile = open('data/testset_bert_embeddings', 'rb')
-            robertfile = open('data/testset_robert_embeddings', 'rb')
-            xlnetfile = open('data/testset_xlnet_embeddings', 'rb')
+            bertfile = open(bert_path, 'rb')
+            robertfile = open(roberta_path, 'rb')
             while True:
                 try:
                     x_bert, y = self.get_pair(pickle.load(bertfile))
                     x_roberta, _ = self.get_pair(pickle.load(robertfile))
-                    x_xlnet, _ = self.get_pair(pickle.load(xlnetfile))
+
                     y = y.to(device)
-                    x = torch.cat((x_roberta, x_bert, x_xlnet), dim=1)
+                    x = torch.cat((x_roberta, x_bert), dim=0)
                     y_hat = self.net(x)
                     loss = self.loss_fn(y_hat, y)
                     losses.append(loss)
@@ -110,21 +120,29 @@ class TransformerModel():
                     break
             bertfile.close()
             robertfile.close()
-            xlnetfile.close()
         print(f'Average MSE loss for Test: {torch.mean(torch.Tensor(losses))}')
         print(f"Average RMSE loss for Test: {torch.sqrt(torch.mean(torch.Tensor(losses)))}")
-
+        if dataset=='trainset':
+            self.train_losses.append(torch.sqrt(torch.mean(torch.Tensor(losses))))
+        elif dataset=='valset':
+            self.val_losses.append(torch.sqrt(torch.mean(torch.Tensor(losses))))
+        else:
+            print("Test set")
+            print(f"Average RMSE loss for Test: {torch.sqrt(torch.mean(torch.Tensor(losses)))}")
 
     @staticmethod
     def get_pair(batch):
         edited, original, masked, y = batch
         stacked_batch = []
-
+        
         for i in range(len(original)):
             stacked_batch.append(torch.stack([original[i][0][:,0,:],
             edited[i][0][:,0,:], masked[i][0][:,0,:]]).squeeze())
+            stacked_batch[i] = stacked_batch[i].unsqueeze(dim=1)
 
-        x = torch.stack(stacked_batch)
+        x = torch.stack(stacked_batch, dim=1)
+        x = x.squeeze()
+
         y = y.to(torch.float)
         y = torch.unsqueeze(y, 1)
         return x, y
