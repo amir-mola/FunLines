@@ -8,7 +8,6 @@
 4. [Evaluation and Results](#evaluation-results)
 4. [Related Work and References](#related-work-references)
 5. [Presentation](https://homes.cs.washington.edu/~amirmola/files/final.mp4)
-5. [Demo Recording](https://homes.cs.washington.edu/~amirmola/files/demo.mp4)
 
 # Abstract <a name="abstract"></a>
 In this project, we are examining article headlines and attempting to quantify how humorous they are. The model uses a continuous scale from 0 to 3 to rank how humorous a particular article headline is. Given an edited and original headline, we aim to predict the average humor score for it using Neural Networks. The process and results of this project can be used for applications such as advancing a machine’s understanding of humor in the English language and could help technologies such as voice assistant jokes.
@@ -55,7 +54,7 @@ Example of averaging word tokens to get a new word token u
 Both of these approaches used two fully connected layers to predict the score using an arbitrary token that we inserted.
 
 # LSTM <a name="lstm"></a>
-As we explored various options to understand machine humor more, one of our approaches involved trying LSTMs with the original and edited headlines to capture order of the words. Below is our model structure using LSTMs:
+As we explored various options to understand machine humor more, one of our approaches involved trying LSTMs with the original and edited headlines to capture incongruity of the words. Below is our model structure using LSTMs:
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/lstm_diagram.png)
 
@@ -79,6 +78,10 @@ Loss for Transformer on CLS token result:\
 
 Loss for Transformer model on replaced word:\
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/transformer_word_model.png)\
+
+As we can see, Transformer models and LSTM got lowest score on testset compare to devset and trainset. We assume this happened because all of our models are predicting
+mean score of all scores in trainingset. Thus, it does not matter whether we train or change our network architecture. What it matters is that how far scores are
+in the dataset. Testset had lowest RMSE score because most of the scores in testset are close to mean score.
 
 # Related work and references <a name="related-work-references"></a>
 The dataset for this project can be found [here](https://cs.rochester.edu/u/nhossain/funlines.html) \
