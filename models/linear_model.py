@@ -2,7 +2,6 @@ import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-from utils import embedding
 from utils.cachedir import cache_dir
 
 import numpy as np
