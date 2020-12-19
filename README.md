@@ -44,7 +44,7 @@ Ensembling multiple pretrained models to do certain tasks in NLP is one of the t
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/transformer_diagram.png)
 
-Another approach that we took was using replaced word embeddings instead of CLS tokens from original, edited,, and masked sentences. If replaced words were more than 
+Another approach that we took was using replaced word embeddings instead of CLS tokens from original, edited, and masked sentences. If replaced words were more than 
 one token, we simply averaged those word tokens to get a single word token.
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/architecture.png)
