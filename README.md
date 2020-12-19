@@ -40,11 +40,12 @@ Diagram of Fully Connected Model Architecture:
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/linear_model_diagram.png)
 
 # Transformer Model <a name="transformer-model"></a>
-Ensembling multiple pretrained models to do certain tasks in NLP is one of the techniques that people use nowadays. We followed this approach by embedding sentences through Bert and Roberta. To incorporate all the information that we got from Bert and Roberta by using original sentence, edited sentence, and masked sentence, we simply put embeddings we got from Bert and Roberta to Transformer Encoder. We inserted an arbitrary token that went through nn.embedding layer in front of all other tokens before forwarding it to the transformer encoder. Whole idea is that this arbitrary token we inserted will gather information from other 6 CLS tokens that I got from Bert and Roberta by going through a transformer encoder. Since the position of these CLS tokens and arbitrary token does not have any relationship, we got rid of the position encoder.
+Ensembling multiple pretrained models to do certain tasks in NLP is one of the techniques that people use nowadays. We followed this approach by embedding sentences through Bert and Roberta. To incorporate all the information that we got from Bert and Roberta by using original sentence, edited sentence, and masked sentence, we simply took CLS tokens from embeddings we got from Bert and Roberta, and forwarded them to Transformer Encoder with an arbitrary token in front. We inserted an arbitrary token that went through nn.embedding layer in front of all other tokens before forwarding it to the transformer encoder. Whole idea is that this arbitrary token we inserted will gather information from other 6 CLS tokens that we got from Bert and Roberta by going through a transformer encoder. Since the position of these CLS tokens and arbitrary token does not have any relationship, we got rid of the position encoder.
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/transformer_diagram.png)
 
-Another approach that we took was using word embeddings instead of CLS tokens from original, edited,, and masked sentences. If replaced words or original words are more than 1, we simply averaged those word tokens to get a single word token.
+Another approach that we took was using replaced word embeddings instead of CLS tokens from original, edited,, and masked sentences. If replaced words were more than 
+one token, we simply averaged those word tokens to get a single word token.
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/architecture.png)
 
