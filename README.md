@@ -62,7 +62,12 @@ Drawing from the original paper as and the transformer experiment in the previou
 To follow the original findings of the paper, we used MSE loss as our reporting metric. We divided the original dataset into train (80%), dev (10%) and test (10%). Below are the results for the two main approaches that we tried.
 
 ![](https://raw.githubusercontent.com/amir-mola/FunLines/main/images/accuracy.png)
-
+Model | RMSE (Train) | RMSE (Dev) | RMSE (Test) |
+--- | --- | --- | --- |
+Linear | 0.442 | 0.633 | 0.637 |
+Transformer on CLS token | 0.567 | 0.574 | 0.563 |
+Transformer on replaced word token | 0.565 | 0.572 | 0.560 |
+LSTM | 0.564 | 0.568 | 0.562 |
 # Related work and references <a name="related-work-references"></a>
 The dataset for this project can be found [here](https://cs.rochester.edu/u/nhossain/funlines.html) \
 In our project we aimed to follow the structure and procedure based on this [paper](https://arxiv.org/pdf/2002.02031.pdf)
