@@ -8,6 +8,7 @@
 4. [Evaluation and Results](#evaluation-results)
 4. [Related Work and References](#related-work-references)
 5. [Presentation](https://homes.cs.washington.edu/~amirmola/files/final.mp4)
+5. [Demo Recording](https://homes.cs.washington.edu/~amirmola/files/demo.mp4)
 
 # Abstract <a name="abstract"></a>
 In this project, we are examining article headlines and attempting to quantify how humorous they are. The model uses a continuous scale from 0 to 3 to rank how humorous a particular article headline is. Given an edited and original headline, we aim to predict the average humor score for it using Neural Networks. The process and results of this project can be used for applications such as advancing a machine’s understanding of humor in the English language and could help technologies such as voice assistant jokes.
